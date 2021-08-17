@@ -6,7 +6,7 @@ import { Feature, Geometry, GeoJsonProperties } from 'geojson';
 import { FeatureCollection } from 'geojson';
 import { feature }  from 'topojson-client';
 import { v4 as uuidv4 } from "uuid"
-import { geoEqualEarth, geoEquirectangular, geoMercator, geoOrthographic, geoPath, GeoProjection, geoStereographic } from "d3-geo";
+import { geoEqualEarth, geoEquirectangular, geoMercator, geoMercatorRaw, geoOrthographic, geoPath, GeoProjection, geoStereographic } from "d3-geo";
 import * as d3 from "d3"
 
 const loadBorders = async () => {
@@ -21,7 +21,7 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
         this._asyncRequestStatus = false
         this.state = {
             borders: [],
-            projection : geoStereographic(),
+            projection : geoMercator(),
             bboxes: new Array<Array<number>>()
         }
     }
@@ -44,9 +44,6 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                 this._asyncRequestStatus = false;
                 let bordersData = externalData.data
                 console.log(bordersData.features)
-                bordersData.features.forEach(it=>{
-                    console.log(it.properties ? it.properties.ADMIN : "NOTHING AT ALL")
-                })
                 this.setState({borders: bordersData.features});
             }
         );
@@ -85,13 +82,13 @@ export default class Map extends React.PureComponent<IMapProps, IMapState> {
                             fill={`rgb(30,50,50)`}
                             stroke="aliceblue"
                         />
-                        {/* <text
+                        <text
                             key = {`text-${uuidv4()}`}
                             x = {d3.geoPath(this.state.projection).centroid(d.geometry)[0]}
                             y = {d3.geoPath(this.state.projection).centroid(d.geometry)[1]}
                         >
                             {d.properties ? d.properties.ADMIN : ""}
-                        </text> */}
+                        </text>
                     </>
 				))}
 				</g>
